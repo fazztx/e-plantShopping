@@ -3,27 +3,26 @@ import './ProductList.css'
 import CartItem from './CartItem';
 import CartSlice, { addItem } from './CartSlice';
 
-import { useSelector, useDispatch } from "react-redux";
+
+import { useSelector, useDispatch} from "react-redux";
 
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
 
     //To track which products are added to the cart
-    const [addedToCart, setAddedToCart] = useState(false); 
+    const [addedToCart, setAddedToCart] = useState({}); 
 
     const cartItems = useSelector((state) => {return state.cart.items});
     const totalQuantityCounter = useSelector( (state) => (state.cart.totalQuantity) );
     const dispatch = useDispatch();
 
-
     const handleAddToCart = (plant) =>{
-        //console.log(plant);
         dispatch(addItem(plant));
-        // setAddedToCart((prevState) => ({
-        //     ...prevState,
-        //     [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
-        //   }));
+            setAddedToCart((prevState) => ({
+            ...prevState,
+            [plant.name]: true, // Set the product name as key and value as true to indicate it's added to cart
+          }));
     }
     const plantsArray = [
         {
@@ -299,15 +298,21 @@ function ProductList() {
                                         <img className='product-image' src={plant.image} alt={"Show "+ plant.name + " image"}/>
                                         <li className='product-price'>{plant.cost}</li>
                                         <li>{plant.description}</li>
-                                        <button className='product-button' onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                        {/* className={`product-button ${addedToCart[plant.name] ? 'added-to-cart' : ''}`} */}
+                                        <button className={`product-button ${addedToCart[plant.name] ? 'added-to-cart' : ''}`}
+                                        disabled={addedToCart[plant.name]}
+                                        onClick={() => handleAddToCart(plant)}>Add to Cart</button>
                                     </ul>
                                 ))}
                             </ul>
                         </>
                     ))}
-                </div>
+,                </div>
             ) : (
-                <CartItem onContinueShopping={handleContinueShopping} />
+                <CartItem 
+                addedToCart={addedToCart} //passed the state as props to moduify when a plant is deleted from the cart 
+                onContinueShopping={handleContinueShopping} 
+                />
             )}
         </div>
     );

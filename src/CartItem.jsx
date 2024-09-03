@@ -4,7 +4,7 @@ import { removeItem, updateQuantity } from './CartSlice';
 import './CartItem.css';
 import ProductList from './ProductList';
 
-const CartItem = ({ onContinueShopping }) => {
+const CartItem = ({ addedToCart, onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
 
@@ -43,11 +43,13 @@ const CartItem = ({ onContinueShopping }) => {
       dispatch(updateQuantity({name:item.name, quantity: x})); //Only decrements when >1
     } else{
       dispatch(removeItem(item));
+      addedToCart[item.name] = false;
     }
   };
 
   const handleRemove = (item) => {
     dispatch(removeItem(item));
+    addedToCart[item.name] = false;
   };
 
   // Calculate total cost based on quantity for an item
